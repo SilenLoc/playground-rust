@@ -9,11 +9,12 @@ fn main() {
     let delay = time::Duration::from_millis(1000);
     thread::sleep(delay);
 
-        if let Err(error) = listen(callback) {
-            println!("Error: {:?}", error)
-        }
+    if let Err(error) = listen(callback) {
+        println!("Error: {:?}", error)
+    }
 
     type_word("some Word")
+}
 
 
 fn callback(event: Event) {
