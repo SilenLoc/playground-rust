@@ -13,7 +13,7 @@ Rust Playground.
 
 [workspace]
 members = [
- 
+
 ]
 
 [dependencies]
