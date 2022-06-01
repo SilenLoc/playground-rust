@@ -67,7 +67,9 @@ fn type_string(str: &str, out_action: fn(Key)){
         "x" => {out_action(KeyX)},
         "y" => {out_action(KeyY)},
         "z" => {out_action(KeyZ)},
-        " " => {out_action(Key::Space)}
+        " " => {out_action(Key::Space)},
+        "." => {out_action(Key::Dot)},
+        "," => {out_action(Key::Comma)}
         _ => {}
     }
 }
