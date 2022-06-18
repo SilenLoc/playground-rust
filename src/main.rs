@@ -1,29 +1,16 @@
-use keyboard::type_word;
-use std::{thread, time};
-use rdev::{listen, Event};
+use std::{env, fs};
+use std::error::Error;
+use std::path::PathBuf;
+use crate::dir_find::find_dir;
 
 
-pub mod keyboard;
+pub mod dir_find;
 
 fn main() {
-    let delay = time::Duration::from_millis(1000);
-    thread::sleep(delay);
+  find_dir(String::from("./"));
 
-    if let Err(error) = listen(callback) {
-        println!("Error: {:?}", error)
-    }
-
-    type_word("some Word")
 }
 
-
-fn callback(event: Event) {
-
-    match event.name {
-        Some(string) => println!("User wrote {:?}", string),
-        None => (),
-    }
-}
 
 
 
