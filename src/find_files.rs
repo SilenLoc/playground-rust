@@ -13,8 +13,6 @@ pub fn find_all_files(path_dir: &str, with_extension: &str) -> Vec<DirEntry> {
             list.push(file)
         }
     };
-
-    println!("{:#?}", list);
     return list.to_vec();
 }
 
