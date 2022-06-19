@@ -10,6 +10,7 @@ fn main() {
     let path_dir = "./";
     let start_of_import = r"^use";
 
+
     let files = find_all_files(path_dir, file_extension);
 
     println!();
@@ -17,9 +18,7 @@ fn main() {
     println!("{:#?}", files);
 
     let lines = read_lines_of_files(files);
-
     let re = create_line_regex(start_of_import);
-
     let filtered_lines: Vec<String> = lines.into_iter().filter(|line| re.is_match(line)).collect();
 
     println!();
