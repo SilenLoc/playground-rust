@@ -1,29 +1,18 @@
-use crate::filter_lines::create_line_regex;
-use crate::find_files::{find_all_files, read_lines_of_files};
+use crate::get_matching_lines::get_matching_lines;
 
-
-pub mod find_files;
+mod get_matching_lines;
 mod filter_lines;
+mod find_files;
 
 fn main() {
-    let file_extension = "rs";
+    let file_extension_of_source_files = "rs";
+
+    let file_extension_of_dep_file = ".toml";
+
     let path_dir = "./";
     let start_of_import = r"^use";
 
-
-    let files = find_all_files(path_dir, file_extension);
-
-    println!();
-    println!("Files with the file extension -{}- : ", &file_extension);
-    println!("{:#?}", files);
-
-    let lines = read_lines_of_files(files);
-    let re = create_line_regex(start_of_import);
-    let filtered_lines: Vec<String> = lines.into_iter().filter(|line| re.is_match(line)).collect();
-
-    println!();
-    println!("Lines with regex -{}- match  : ", &start_of_import);
-    println!("{:#?}", filtered_lines);
+    let matched_lines = get_matching_lines(file_extension_of_source_files, path_dir, start_of_import);
 }
 
 
