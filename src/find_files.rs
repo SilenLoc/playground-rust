@@ -26,6 +26,7 @@ pub fn read_lines_of_files(files: Vec<DirEntry>) -> Vec<Vec<String>> {
 
                 inner_vec.push(line.unwrap_or("no line read".parse().unwrap()));
                 inner_vec.push(file.path().to_str().unwrap().parse().unwrap());
+                inner_vec.push(file.path().parent().unwrap().to_str().unwrap().parse().unwrap());
 
                 list.push(inner_vec)
             }
