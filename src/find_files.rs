@@ -16,17 +16,21 @@ pub fn find_all_files(path_dir: &str, with_extension: &str) -> Vec<DirEntry> {
     return list.to_vec();
 }
 
-pub fn read_lines_of_files(files: Vec<DirEntry>) -> Vec<String> {
+pub fn read_lines_of_files(files: Vec<DirEntry>) -> Vec<Vec<String>> {
     let mut list = Vec::new();
 
     for file in files.into_iter() {
         if let Ok(lines) = read_lines(file.path()) {
             for line in lines {
-                list.push(line.unwrap_or("no line read".parse().unwrap()))
+                let mut inner_vec = Vec::new();
+
+                inner_vec.push(line.unwrap_or("no line read".parse().unwrap()));
+                inner_vec.push(file.path().to_str().unwrap().parse().unwrap());
+
+                list.push(inner_vec)
             }
         }
     }
-
 
     return list.to_vec();
 }
