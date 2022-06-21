@@ -26,7 +26,8 @@ pub fn read_lines_of_files(files: Vec<DirEntry>) -> Vec<Vec<String>> {
 
                 inner_vec.push(line.unwrap_or("no line read".parse().unwrap()));
                 inner_vec.push(file.path().to_str().unwrap().parse().unwrap());
-                inner_vec.push(file.path().parent().unwrap().to_str().unwrap().parse().unwrap());
+
+                inner_vec.push(get_module_path(&file).to_str().unwrap().to_string());
 
                 list.push(inner_vec)
             }
@@ -34,6 +35,19 @@ pub fn read_lines_of_files(files: Vec<DirEntry>) -> Vec<Vec<String>> {
     }
 
     return list.to_vec();
+}
+
+fn get_module_path(file: &DirEntry) -> &Path {
+    let position = file.path().into_iter().position(|dir| dir.to_ascii_lowercase().to_str() == Some("src")).unwrap();
+
+    let mut path = file.path();
+    for (i, _dir) in file.path().into_iter().enumerate() {
+        if i < position {
+            path = path.parent().unwrap();
+        }
+    }
+
+    return path;
 }
 
 fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
