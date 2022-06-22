@@ -1,9 +1,0 @@
-[
-  [
-    [
-      "someimport xyxyxy",
-      "./somerepo/somemodule/src/somepackage/somefile.txt",
-      "./somerepo/somemodule"
-    ]
-  ]
-]
