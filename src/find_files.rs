@@ -41,7 +41,7 @@ pub fn read_lines_of_files(files: Vec<DirEntry>, regex: &str) -> Vec<Module> {
     for file_first in files_first.iter() {
         let module_path = get_module_path(&file_first).or(Some(&Path::new(""))).unwrap().to_path_buf();
 
-        if !inner_list.contains(&module_path) {
+        if !inner_list.contains(&module_path) && &module_path.to_str().unwrap() != &"" {
             inner_list.push(module_path);
         }
     }
@@ -74,16 +74,20 @@ pub fn read_lines_of_files(files: Vec<DirEntry>, regex: &str) -> Vec<Module> {
 }
 
 fn get_module_path(file: &DirEntry) -> Option<&Path> {
-    let position = file.path().into_iter().position(|dir| dir.to_ascii_lowercase().to_string_lossy().as_ref() == "src").or(Some(0)).unwrap();
+    let position = file.path().into_iter().position(|dir| dir.to_ascii_lowercase().to_string_lossy().as_ref() == "src");
 
     let mut path = Some(file.path());
-    for (i, _dir) in file.path().into_iter().enumerate() {
-        if i < position {
-            path = path.or(Option::from(Path::new(""))).unwrap().parent();
-        }
-    }
 
-    path
+    if  position.is_some(){
+        for (i, _dir) in file.path().into_iter().enumerate() {
+            if i < position.unwrap() {
+                path = path.unwrap().parent();
+            }
+        }
+        path
+    } else {
+        None
+    }
 }
 
 fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
