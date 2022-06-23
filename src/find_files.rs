@@ -41,7 +41,7 @@ pub fn read_lines_of_files(files: Vec<DirEntry>, regex: &str) -> Vec<Module> {
     for file_first in files_first.iter() {
         let module_path = get_module_path(&file_first).or(Some(&Path::new(""))).unwrap().to_path_buf();
 
-        if !inner_list.contains(&module_path) && &module_path.to_str().unwrap() != &"" {
+        if !inner_list.contains(&module_path) && module_path.ends_with("src") {
             inner_list.push(module_path);
         }
     }
