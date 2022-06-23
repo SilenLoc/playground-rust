@@ -5,8 +5,11 @@ use std::fs::File;
 use std::io;
 use std::io::BufRead;
 use std::path::{Path, PathBuf};
+
+use serde::{Deserialize, Serialize};
 use walkdir::{DirEntry, WalkDir};
-use serde::{Serialize, Deserialize};
+
+use crate::filter_lines::create_line_regex;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Module {
@@ -14,10 +17,6 @@ pub struct Module {
     lines: Vec<String>,
 }
 
-
-
-
-use crate::filter_lines::create_line_regex;
 
 pub fn find_all_files(path_dir: &str, with_extension: &str) -> Vec<DirEntry> {
     let mut list = Vec::new();
@@ -30,7 +29,11 @@ pub fn find_all_files(path_dir: &str, with_extension: &str) -> Vec<DirEntry> {
     return list.to_vec();
 }
 
-pub fn read_lines_of_files(files: Vec<DirEntry>, regex: &str) -> Vec<Module> {
+pub fn read_lines_of_files(
+    files: Vec<DirEntry>, regex: &str,
+    ignore_import_that_start_with: &str,
+    cut_from_dep: &str,
+) -> Vec<Module> {
     let re = create_line_regex(regex.clone());
     let mut list: Vec<Module> = Vec::new();
 
@@ -59,7 +62,9 @@ pub fn read_lines_of_files(files: Vec<DirEntry>, regex: &str) -> Vec<Module> {
                 for line in lines {
                     let read_line = line.unwrap_or("no line read".parse().unwrap());
                     if re.is_match(&read_line) {
-                        inner_vec.push(read_line.clone());
+                        if !&read_line.starts_with(ignore_import_that_start_with) {
+                            inner_vec.push(read_line.clone().replace(cut_from_dep,""));
+                        }
                     }
                 }
             }
