@@ -1,3 +1,12 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**
+
+- [A Rust CLI template on Gitpod](#a-rust-cli-template-on-gitpod)
+  - [Next Steps](#next-steps)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 # A Rust CLI template on Gitpod
