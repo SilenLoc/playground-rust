@@ -1,33 +1,14 @@
-extern crate alloc;
-
 use std::fs::File;
 use std::io::Write;
 
-use crate::find_files::find_all_files;
-use crate::get_source_file_import_lines::find_source_file_import_lines;
+use crate::modules_finder::{find_module_refs, ModuleRef};
 
-mod get_matching_lines;
-mod filter_lines;
-mod find_files;
-mod get_source_file_import_lines;
-mod get_dep_file_dep_lines;
+mod modules_finder;
 
 fn main() {
+  let pure_lines = find_module_refs("C:\\repo\\tptools\\tptool", "kts", "kt");
 
-  let regex_dep = r#"(compile|testCompile|implementation|testImplementation|compileOnly|runtime|testRuntime
-  |[a-zA-Z0-9_]{1,100})\sgroup\:\s['"](.*)['"],\sname\:\s['"](.*)['"],\sversion\:\s['"](.*)['"]
-  |(compile|testCompile|implementation|testImplementation|compileOnly|runtime|testRuntime|[a-zA-Z0-9_]{1,100})\s['"](.*):(.*):(.*)['"]
-  |(compile|testCompile|implementation|testImplementation|compileOnly|runtime|testRuntime|[a-zA-Z0-9_]{1,100})\(['"](.*):(.*):(.*)['"]\)
-  "#;
-
-
-  let lines = find_source_file_import_lines(
-    "C:\\repo\\tptools\\tptool",
-    "kt",
-    r"^import",
-    "import com.opt",
-    "import "
-  );
+  let lines: Vec<ModuleRef> = pure_lines.into_iter().map(|module_ref| module_ref.filter_src_lines("import ")).collect();
 
   let lines_json = serde_json::to_string_pretty(&lines).unwrap();
 
