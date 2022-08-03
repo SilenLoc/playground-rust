@@ -1,21 +1,13 @@
-use std::fs::File;
-use std::io::Write;
+use crate::persistence::{env_default, PersistenceEnv};
+use crate::run_tool::run_tool;
 
-use crate::modules_finder::{find_module_refs, ModuleRef};
-
-mod modules_finder;
+mod run_tool;
+mod command_runner;
+mod persistence;
 
 fn main() {
-  let pure_lines = find_module_refs("C:\\repo\\tptools\\tptool", "kts", "kt");
-
-  let lines: Vec<ModuleRef> = pure_lines.into_iter().map(|module_ref| module_ref.filter_src_lines("import ")).collect();
-
-  let lines_json = serde_json::to_string_pretty(&lines).unwrap();
-
-
-  let mut file = File::create("report.json").expect("xxx");
-
-  file.write_all(lines_json.as_ref()).expect("xx");
+    let save_env: Box<PersistenceEnv> = env_default();
+    save_env.save_to_local("hey");
 }
 
 
