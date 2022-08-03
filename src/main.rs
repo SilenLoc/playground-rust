@@ -6,7 +6,8 @@ mod command_runner;
 mod persistence;
 
 fn main() {
-    let save_env: Box<PersistenceEnv> = env_default();
+    let save_env: PersistenceEnv = env_default();
+
     save_env.save_to_local("hey");
 }
 
