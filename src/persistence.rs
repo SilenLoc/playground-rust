@@ -15,7 +15,7 @@ impl PersistenceEnv {
     }
 
     pub fn load_from_local(&self) -> String {
-        let mut file = File::open(&self.name).unwrap();
+        let mut file = File::open(&self.name).or(File::create(&self.name)).and_then(|file| File::open(&self.name)).unwrap();
         let mut contents = String::new();
         file.read_to_string(&mut contents).expect("could not read");
         contents
@@ -38,53 +38,56 @@ pub fn env_default() -> PersistenceEnv {
     }
 }
 
-mod disk_pers {
-    use serde_json::{Map, Value};
-
+pub mod disk_pers {
+    use std::collections::HashMap;
     use crate::PersistenceEnv;
 
-    pub struct DiskMapEnv<T> {
-        inner: Map<String, T>,
+    pub struct DiskMapEnv {
+        inner: HashMap<String, String>,
         env: PersistenceEnv,
     }
 
-    impl<T> DiskMapEnv<T> {
-        fn put(&mut self, key: String, value: T) -> Option<T> {
-            self.env.load_from_local();
-            self.inner.insert(key, value)
-            //save
+    impl DiskMapEnv {
+        pub fn put(&mut self, key: String, value: String) -> Option<String> {
+            self.update_inner();
+            let value = self.inner.insert(key, value);
+            self.update_outer();
+            value
         }
 
-        fn delete(&mut self, key: String) {
-            //load
+        pub fn delete(&mut self, key: String) {
+            self.update_inner();
             self.inner.remove(&*key);
-            //save
+            self.update_outer();
         }
 
-        fn get(&self, key: String) -> Option<&T> {
-            //load
+        pub fn get(&mut self, key: String) -> Option<&String> {
+            self.update_inner();
             self.inner.get(&*key)
         }
 
-        fn update_inner(&mut self, new_inner: Map<String, T>) {
-            for (key, value) in &new_inner {
-                self.inner.insert(key.clone(), value)
+        fn update_inner(&mut self) {
+           let from_file = self.env.load_from_local();
+
+            let map:HashMap<String, String> = serde_json::from_str(&*from_file).or(self.env.save_to_local(serde_json::to_string(&self.inner).unwrap()));
+            for (key, value) in &map {
+                self.inner.insert(key.clone(), value.clone());
             }
         }
 
         fn update_outer(&mut self){
-            self.env.save_to_local(seself.inner)
-
+            let serialized = serde_json::to_string(&self.inner);
+            self.env.save_to_local(&*serialized.unwrap())
         }
     }
 
-    pub fn create_disk_map_env<T>(name: String, location: String) -> DiskMapEnv<T> {
+    pub fn create_disk_map_env(name: String, location: String) -> DiskMapEnv {
         let pers_env = PersistenceEnv {
             name,
             location,
         };
         DiskMapEnv {
-            inner: Map::new(),
+            inner: HashMap::new(),
             env: pers_env,
         }
     }
