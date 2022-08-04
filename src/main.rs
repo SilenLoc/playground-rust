@@ -1,3 +1,5 @@
+extern crate core;
+
 use crate::persistence::{env_default, PersistenceEnv};
 use crate::run_tool::run_tool;
 
